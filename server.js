@@ -15,7 +15,7 @@ import uploadRoutes from './src/routes/uploadRoutes.js';
 import newsRoutes from './src/routes/newsRoutes.js';
 import videoRoutes from "./src/routes/videoRoutes.js";
 import mainNewsRoutes from "./src/routes/mainNewsRoutes.js";
-import adsRoutes from "./src/routes/adsRoutes.js"; 
+import adsRoutes from './src/routes/adsRoutes.js'; 
 import { notFound, errorHandler } from './src/middleware/errorMiddleware.js';
 
 dotenv.config();
@@ -24,7 +24,7 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Connect DB
+// Connect to MongoDB
 await connectDB();
 
 // Middlewares
@@ -36,10 +36,13 @@ if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('dev'));
 }
 
-// ✅ CORS
+// ✅ CORS - ديناميكي حسب Environment Variable أو localhost
+const allowedOrigins = process.env.CORS_ORIGIN 
+  ? process.env.CORS_ORIGIN.split(',') 
+  : ['http://localhost:5173', 'http://localhost:3000', 'https://visualart-iraq.com'];
+
 app.use(cors({
   origin: (origin, callback) => {
-    const allowedOrigins = ['http://localhost:5173', 'http://localhost:3000'];
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -50,7 +53,6 @@ app.use(cors({
 }));
 
 // Static uploads folder
-// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/uploads', cors(), express.static(path.join(__dirname, 'uploads')));
 
 // Routes
@@ -61,11 +63,10 @@ app.use('/api/services', serviceRoutes);
 app.use('/api/logistics', logisticsRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/news', newsRoutes);
-app.use("/api/videos", videoRoutes);
+app.use('/api/videos', videoRoutes);
 app.use('/api/main-news', mainNewsRoutes);
-app.use('/api/ads', adsRoutes); 
-app.use("/api/services", serviceRoutes);
-app.use("/api/logistics", logisticsRoutes);
+app.use('/api/ads', adsRoutes);
+
 // Errors
 app.use(notFound);
 app.use(errorHandler);
