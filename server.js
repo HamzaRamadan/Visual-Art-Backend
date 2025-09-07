@@ -12,6 +12,7 @@ import serviceRoutes from './src/routes/serviceRoutes.js';
 import logisticsRoutes from './src/routes/logisticsRoutes.js';
 import authRoutes from './src/routes/authRoutes.js';
 import uploadRoutes from './src/routes/uploadRoutes.js';
+import videoUploadRoutes from './src/routes/videoUploadRoutes.js';
 import newsRoutes from './src/routes/newsRoutes.js';
 import videoRoutes from "./src/routes/videoRoutes.js";
 import mainNewsRoutes from "./src/routes/mainNewsRoutes.js";
@@ -41,16 +42,7 @@ const allowedOrigins = process.env.CORS_ORIGIN
   ? process.env.CORS_ORIGIN.split(',')
   : ['http://localhost:5173', 'http://localhost:3000', 'https://visualart-iraq.com'];
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-}));
+app.use(cors());
 
 // Handle preflight requests for all routes
 app.options('*', cors({
@@ -64,8 +56,7 @@ app.options('*', cors({
   credentials: true,
 }));
 
-// Static uploads folder
-app.use('/uploads', cors(), express.static(path.join(__dirname, 'uploads')));
+// Note: Static file serving removed as we're now using Cloudinary for file storage
 
 // Routes
 app.get('/', (req, res) => res.json({ status: 'ok', service: 'Al-Farabi API' }));
@@ -74,6 +65,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/logistics', logisticsRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/video-upload', videoUploadRoutes);
 app.use('/api/news', newsRoutes);
 app.use('/api/videos', videoRoutes);
 app.use('/api/main-news', mainNewsRoutes);

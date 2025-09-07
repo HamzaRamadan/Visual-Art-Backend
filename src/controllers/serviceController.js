@@ -13,6 +13,21 @@ export const getServices = async (req, res) => {
 // Create
 export const createService = async (req, res) => {
   try {
+    // Validate required fields
+    const { ar, en } = req.body;
+    
+    if (!ar || !en) {
+      return res.status(400).json({ error: "Both Arabic and English content are required" });
+    }
+    
+    if (!ar.title || !ar.description) {
+      return res.status(400).json({ error: "Arabic title and description are required" });
+    }
+    
+    if (!en.title || !en.description) {
+      return res.status(400).json({ error: "English title and description are required" });
+    }
+    
     const service = new Service(req.body);
     await service.save();
     res.status(201).json(service);

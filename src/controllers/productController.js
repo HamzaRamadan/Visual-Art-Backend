@@ -67,6 +67,27 @@ export const getOne = asyncHandler(async (req, res) => {
 
 // POST /api/products
 export const createOne = asyncHandler(async (req, res) => {
+  // Validate that image URLs are provided
+  const { ar, en } = req.body;
+  
+  if (ar && ar.length > 0) {
+    for (let item of ar) {
+      if (!item.img) {
+        res.status(400);
+        throw new Error('Image is required for Arabic content');
+      }
+    }
+  }
+  
+  if (en && en.length > 0) {
+    for (let item of en) {
+      if (!item.img) {
+        res.status(400);
+        throw new Error('Image is required for English content');
+      }
+    }
+  }
+  
   const item = await Product.create(req.body);
   res.status(201).json(item);
 });
