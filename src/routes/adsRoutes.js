@@ -7,7 +7,9 @@ const router = express.Router();
 // ✅ إضافة إعلان جديد (صور متعددة)
 router.post("/", upload.array("images", 10), async (req, res) => {
   try {
-    const images = req.files ? req.files.map((f) => `/uploads/${f.filename}`) : [];
+    // const images = req.files ? req.files.map((f) => `/uploads/${f.filename}`) : [];
+    const images = req.files ? req.files.map((f) => f.path) : [];
+
 
     if (images.length === 0) {
       return res.status(400).json({ error: "No images uploaded" });
