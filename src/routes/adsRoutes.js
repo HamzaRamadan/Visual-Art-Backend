@@ -8,7 +8,8 @@ const router = express.Router();
 router.post("/", upload.array("images", 10), async (req, res) => {
   try {
     // const images = req.files ? req.files.map((f) => `/uploads/${f.filename}`) : [];
-    const images = req.files ? req.files.map((f) => f.path) : [];
+    const images = req.files ? req.files.map((f) => f.path || f.secure_url) : [];
+
 
 
     if (images.length === 0) {
