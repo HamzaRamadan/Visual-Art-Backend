@@ -38,14 +38,14 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // ✅ CORS - شامل كل الـ routes و preflight
-const allowedOrigins = process.env.CORS_ORIGIN
-  ? process.env.CORS_ORIGIN.split(',')
-  : ['http://localhost:5173', 'http://localhost:3000', 'https://visualart-iraq.com'];
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'https://visualart-iraq.com',
+  'https://visual.excellence-horizon.com'
+];
 
-app.use(cors());
-
-// Handle preflight requests for all routes
-app.options('*', cors({
+app.use(cors({
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
@@ -53,8 +53,11 @@ app.options('*', cors({
       callback(new Error('Not allowed by CORS'));
     }
   },
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization'],
   credentials: true,
 }));
+
 
 // Note: Static file serving removed as we're now using Cloudinary for file storage
 
