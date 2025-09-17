@@ -42,7 +42,8 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
   'https://visualart-iraq.com',
-  'https://visual.excellence-horizon.com'
+  'https://visual.excellence-horizon.com',
+  'Visualart-Iraq.com'
 ];
 
 app.use(cors({
