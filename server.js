@@ -43,7 +43,9 @@ const allowedOrigins = [
   'http://localhost:3000',
   'https://visualart-iraq.com',
   'https://visual.excellence-horizon.com',
-  'Visualart-Iraq.com'
+  'Visualart-Iraq.com',
+    'https://www.visualart-iraq.com',  // ✅ ضيف دي
+
 ];
 
 app.use(cors({
