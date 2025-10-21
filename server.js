@@ -78,6 +78,22 @@ app.use('/api/videos', videoRoutes);
 app.use('/api/main-news', mainNewsRoutes);
 app.use('/api/ads', adsRoutes);
 
+
+// Serve frontend (React build) for unknown routes
+import fs from "fs";
+
+// المسار لمجلد الـ build الخاص بـ React
+const frontendPath = path.join(__dirname, 'frontend', 'dist'); // أو build حسب الأداة
+
+app.use(express.static(frontendPath));
+
+// أي Route مش API يرجع index.html
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(frontendPath, 'index.html'));
+});
+
+
+
 // Errors
 app.use(notFound);
 app.use(errorHandler);
