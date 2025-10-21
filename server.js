@@ -44,7 +44,7 @@ const allowedOrigins = [
   'https://visualart-iraq.com',
   'https://visual-art4.vercel.app',
   'https://visual.excellence-horizon.com',
-  'Visualart-Iraq.com',
+  // 'Visualart-Iraq.com',
     'https://www.visualart-iraq.com',  // ✅ ضيف دي
 
 ];
