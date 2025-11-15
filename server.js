@@ -150,7 +150,7 @@ const allowedOrigins = [
   'http://localhost:3000',
   'https://visualart-iraq.com',
   'https://www.visualart-iraq.com',
-  'http://visualart-iraq.com/',
+  'http://visualart-iraq.com',
   'https://visual-art4.vercel.app',
   'https://visual.excellence-horizon.com',
 ];
