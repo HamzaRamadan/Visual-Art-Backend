@@ -1,3 +1,108 @@
+// import express from 'express';
+// import dotenv from 'dotenv';
+// import cors from 'cors';
+// import morgan from 'morgan';
+// import helmet from 'helmet';
+// import path from 'path';
+// import { fileURLToPath } from 'url';
+
+// import connectDB from './src/config/db.js';
+// import productRoutes from './src/routes/productRoutes.js';
+// import serviceRoutes from './src/routes/serviceRoutes.js';
+// import logisticsRoutes from './src/routes/logisticsRoutes.js';
+// import authRoutes from './src/routes/authRoutes.js';
+// import uploadRoutes from './src/routes/uploadRoutes.js';
+// import videoUploadRoutes from './src/routes/videoUploadRoutes.js';
+// import newsRoutes from './src/routes/newsRoutes.js';
+// import videoRoutes from "./src/routes/videoRoutes.js";
+// import mainNewsRoutes from "./src/routes/mainNewsRoutes.js";
+// import adsRoutes from './src/routes/adsRoutes.js'; 
+// import { notFound, errorHandler } from './src/middleware/errorMiddleware.js';
+
+// dotenv.config();
+
+// const app = express();
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
+
+// // Connect to MongoDB
+// await connectDB();
+
+// // Middlewares
+// app.use(express.json({ limit: '50mb' }));
+// app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+// // app.use(helmet());
+
+// if (process.env.NODE_ENV !== 'production') {
+//   app.use(morgan('dev'));
+// }
+
+// // ✅ CORS - شامل كل الـ routes و preflight
+// const allowedOrigins = [
+//   'http://localhost:5173',
+//   'http://localhost:3000',
+//   'https://visualart-iraq.com',
+//   'https://visual-art4.vercel.app',
+//   'https://visual.excellence-horizon.com',
+//   // 'Visualart-Iraq.com',
+//     'https://www.visualart-iraq.com',  // ✅ ضيف دي
+
+// ];
+
+// app.use(cors({
+//   origin: (origin, callback) => {
+//     if (!origin || allowedOrigins.includes(origin)) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   },
+//   methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+//   allowedHeaders: ['Content-Type','Authorization'],
+//   credentials: true,
+// }));
+
+
+// // Note: Static file serving removed as we're now using Cloudinary for file storage
+
+// // Routes
+// app.get('/', (req, res) => res.json({ status: 'ok', service: 'Al-Farabi API' }));
+// app.use('/api/auth', authRoutes);
+// app.use('/api/products', productRoutes);
+// app.use('/api/services', serviceRoutes);
+// app.use('/api/logistics', logisticsRoutes);
+// app.use('/api/upload', uploadRoutes);
+// app.use('/api/video-upload', videoUploadRoutes);
+// app.use('/api/news', newsRoutes);
+// app.use('/api/videos', videoRoutes);
+// app.use('/api/main-news', mainNewsRoutes);
+// app.use('/api/ads', adsRoutes);
+
+
+// // Serve frontend (React build) for unknown routes
+// import fs from "fs";
+
+// // المسار لمجلد الـ build الخاص بـ React
+// const frontendPath = path.join(__dirname, 'frontend', 'dist'); // أو build حسب الأداة
+
+// app.use(express.static(frontendPath));
+
+// // أي Route مش API يرجع index.html
+// app.get('*', (req, res) => {
+//   res.sendFile(path.resolve(frontendPath, 'index.html'));
+// });
+
+
+
+// // Errors
+// app.use(notFound);
+// app.use(errorHandler);
+
+// // Start server
+// const PORT = process.env.PORT || 5000;
+// app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));
+
+
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
@@ -7,6 +112,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 import connectDB from './src/config/db.js';
+
 import productRoutes from './src/routes/productRoutes.js';
 import serviceRoutes from './src/routes/serviceRoutes.js';
 import logisticsRoutes from './src/routes/logisticsRoutes.js';
@@ -14,10 +120,12 @@ import authRoutes from './src/routes/authRoutes.js';
 import uploadRoutes from './src/routes/uploadRoutes.js';
 import videoUploadRoutes from './src/routes/videoUploadRoutes.js';
 import newsRoutes from './src/routes/newsRoutes.js';
-import videoRoutes from "./src/routes/videoRoutes.js";
-import mainNewsRoutes from "./src/routes/mainNewsRoutes.js";
-import adsRoutes from './src/routes/adsRoutes.js'; 
+import videoRoutes from './src/routes/videoRoutes.js';
+import mainNewsRoutes from './src/routes/mainNewsRoutes.js';
+import adsRoutes from './src/routes/adsRoutes.js';
+
 import { notFound, errorHandler } from './src/middleware/errorMiddleware.js';
+import fs from "fs";
 
 dotenv.config();
 
@@ -28,27 +136,28 @@ const __dirname = path.dirname(__filename);
 // Connect to MongoDB
 await connectDB();
 
-// Middlewares
+// ------------ Middlewares ------------
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
-// app.use(helmet());
 
 if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('dev'));
 }
 
-// ✅ CORS - شامل كل الـ routes و preflight
+// ------------ CORS Fix ------------
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
   'https://visualart-iraq.com',
+  'https://www.visualart-iraq.com',
   'https://visual-art4.vercel.app',
   'https://visual.excellence-horizon.com',
-  // 'Visualart-Iraq.com',
-    'https://www.visualart-iraq.com',  // ✅ ضيف دي
-
 ];
 
+// Preflight handler
+app.options('*', cors());
+
+// Main CORS middleware
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
@@ -57,16 +166,15 @@ app.use(cors({
       callback(new Error('Not allowed by CORS'));
     }
   },
-  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
-  allowedHeaders: ['Content-Type','Authorization'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 }));
 
 
-// Note: Static file serving removed as we're now using Cloudinary for file storage
-
-// Routes
+// ------------ API Routes ------------
 app.get('/', (req, res) => res.json({ status: 'ok', service: 'Al-Farabi API' }));
+
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/services', serviceRoutes);
@@ -79,25 +187,25 @@ app.use('/api/main-news', mainNewsRoutes);
 app.use('/api/ads', adsRoutes);
 
 
-// Serve frontend (React build) for unknown routes
-import fs from "fs";
+// ------------ Frontend Serving (React build) ------------
+const frontendPath = path.join(__dirname, 'frontend', 'dist');
 
-// المسار لمجلد الـ build الخاص بـ React
-const frontendPath = path.join(__dirname, 'frontend', 'dist'); // أو build حسب الأداة
-
+// Serve static files
 app.use(express.static(frontendPath));
 
-// أي Route مش API يرجع index.html
-app.get('*', (req, res) => {
+
+// ❗ Fix: Only serve React for NON-API routes
+app.get(/^(?!\/api).*/, (req, res) => {
   res.sendFile(path.resolve(frontendPath, 'index.html'));
 });
 
 
-
-// Errors
+// ------------ Error Handlers ------------
 app.use(notFound);
 app.use(errorHandler);
 
-// Start server
+// ------------ Start Server ------------
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));
+
+
